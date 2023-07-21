@@ -5,7 +5,7 @@ from CriticNetwork import CriticNetwork
 
 class A2CAgent:
     def __init__(self, action_space_size, state_space_size, device):
-        self.gamma = 0.99
+        self.gamma = 0.90
         self.actor_network = ActorNetwork(action_space_size=action_space_size, observation_space_size=state_space_size).to(device=device)
         self.actor_optimizer = torch.optim.Adam(self.actor_network.parameters(), lr=0.0001)
         self.critic_network = CriticNetwork(observation_space_size=state_space_size).to(device=device)

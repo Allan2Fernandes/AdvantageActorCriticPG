@@ -1,11 +1,12 @@
 import sys
 import gymnasium as gym
+import gymnasium.utils.play
 import torch
 import numpy as np
 import random
 from collections import deque
 from A2CAgent import A2CAgent
-
+import time
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
 # Create environment
@@ -18,6 +19,7 @@ action_space_dims = env.action_space.shape[0]
 num_episodes = sys.maxsize
 max_timesteps = 100000
 statistics_window_size = 50
+fps_control = 30
 
 rewards_moving_window = deque(maxlen=statistics_window_size)
 
@@ -34,6 +36,8 @@ for episode in range(num_episodes):
     state = preprocess_state(state)
     episode_rewards = []
     for t in range(max_timesteps):
+        if np.mean(episode_rewards) > 100:
+            time.sleep(1.0 / fps_control)
         action, action_log_prob = agent.act(state, device)
         action = action.to('cpu')
         next_state, reward, done, truncated, info = env.step(action)
